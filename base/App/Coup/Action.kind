@@ -10,7 +10,7 @@ type App.Coup.Action {
   block_assassination
   block_stealing_ambassador
   block_stealing_captain
-}
+} deriving (serializer, deserializer)
 
 App.Coup.Action.get_name(action: App.Coup.Action): String
   case action {

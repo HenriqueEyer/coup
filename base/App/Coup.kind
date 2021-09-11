@@ -294,11 +294,20 @@ App.Coup.when: App.When<App.Coup.State>
         App.set_local!(new_local)
       }
     mouse_click:
-      switch String.eql(event.id) {
-        "start": IO {
-          App.new_post!(local.room, App.Coup.Event.serialize_post(App.Coup.Event.start_game))
-        }
-      }default App.pass!
+      case state.global{
+        preparation:
+          switch String.eql(event.id) {
+            "start": IO {
+              App.new_post!(local.room, App.Coup.Event.serialize_post(App.Coup.Event.start_game))
+            }
+          }default App.pass!
+        game:
+          switch String.starts_with(event.id) {
+            "A":App.pass!
+            "B":App.new_post!(local.room, App.Coup.Event.serialize_post(App.Coup.Event.action(App.Coup.Action.exchange))))
+            "C":App.pass!
+          }default App.pass!
+      }
     // frame:
     //   IO {
     //     get time = IO.get_time
@@ -327,6 +336,17 @@ App.Coup.post: App.Post<App.Coup.State>
         start_game:
           let deck = App.Coup.Deck.three_each
           App.Coup.post.start_game(glob, deck, F64.to_nat(U64.to_f64(time)))
+        action:
+          case glob {
+            preparation: glob
+            game:
+              case event.value.value {
+                exchange: 
+                  let new_game = App.Coup.Game.draw_ambassador(glob.status, addr)
+                  let new_global = App.Coup.State.global.game(new_game, time)
+                  new_global
+              }default glob
+          }
       }
   }
 
@@ -361,11 +381,10 @@ App.Coup.post.start_game.go(
       // Adds User to the Players List if there are enough cards in the Deck
       case hand@fst as a hand@snd as b {
         some some:
-          let character = App.Coup.Card.new
           // Creates hand from the 2 first cards from Deck
-          let hand = {character(a.value, false), character(b.value, false)}
+          let hand = {a.value, b.value}
           // Creates the Player
-          let player = App.Coup.Player.new(addr, count, 2, hand)
+          let player = App.Coup.Player.new(addr, count, 2, hand, none)
           // Removes 2 first cards from Deck
           let deck = Pair.snd!!(List.split!(deck, 2))
           let count = count + 1

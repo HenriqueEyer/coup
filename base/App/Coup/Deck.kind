@@ -1,2 +1,2 @@
 App.Coup.Deck: Type 
-  List<App.Coup.Character>
+  List<App.Coup.Card>

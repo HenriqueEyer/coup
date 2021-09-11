@@ -1,0 +1,8 @@
+type App.Coup.Game.RunningAction {
+  new(
+    address: String
+    action: App.Coup.Action
+    target: String
+    challenged: Maybe<String>
+  )
+}

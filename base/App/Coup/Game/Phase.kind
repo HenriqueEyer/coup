@@ -1,0 +1,5 @@
+type App.Coup.Game.Phase {
+  action
+  counteraction
+  aftermatch
+}

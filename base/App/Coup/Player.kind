@@ -4,5 +4,6 @@ type App.Coup.Player {
     id: Nat
     gold: Nat
     hand: App.Coup.Hand
+    ambassador_hand:Maybe<App.Coup.Hand>
   )
 }

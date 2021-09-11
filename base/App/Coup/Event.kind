@@ -1,6 +1,7 @@
 type App.Coup.Event {
   add_user(user: App.Coup.User)
   start_game
+  action(value: App.Coup.Action)
 } deriving (serializer, deserializer)
 
 App.Coup.Event.serialize_post(ev: App.Coup.Event): String

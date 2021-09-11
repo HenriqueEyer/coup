@@ -1,0 +1,16 @@
+App.Coup.Game.draw_ambassador(game: App.Coup.Game, address: String): App.Coup.Game
+  let { cards_drew, cards_left } = List.split!(game@deck, 2)
+  let player = Map.get!(address, game@players)
+  case player {
+    none: game
+    some: 
+      let { card_one, card_two} = { cards_drew[0], cards_drew[1] }
+      case card_one card_two {
+        some some:
+          let ambassador_hand = { card_one.value card_two.value }
+          let new_player = player.value@ambassador_hand <- some(ambassador_hand)
+          let new_players = Map.set!(address, new_player, game@players)
+          let new_game = game@players <- new_players
+          new_game
+      } default game
+  }
